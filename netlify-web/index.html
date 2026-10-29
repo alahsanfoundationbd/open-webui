@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="bn">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#f5f3ec" />
+		<meta
+			name="description"
+			content="Al Ahsan-এর ব্যক্তিগত AI কথোপকথনের জায়গা। Open WebUI, powered by Netlify."
+		/>
+		<title>Open WebUI · Al Ahsan</title>
+	</head>
+	<body>
+		<div class="app">
+			<aside class="sidebar" id="sidebar" aria-label="কথোপকথন">
+				<a class="brand" href="/" aria-label="Open WebUI হোম"
+					><img class="brand-logo" src="/open-webui.png" alt="" width="40" height="40" /><span>Open WebUI<small>AL AHSAN WORKSPACE</small></span></a
+				>
+				<button class="new-chat" id="new-chat">
+					<span aria-hidden="true">＋</span> নতুন কথোপকথন <kbd>⌘ K</kbd>
+				</button>
+				<label class="search"
+					><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+						<circle cx="10.5" cy="10.5" r="6.5" />
+						<path d="m16 16 4 4" /></svg
+					><input
+						id="search"
+						type="search"
+						placeholder="লোড করা কথোপকথন খুঁজুন"
+						aria-label="লোড করা কথোপকথন খুঁজুন"
+				/></label>
+				<div class="history-heading">আপনার কথোপকথন <span id="history-count">0</span></div>
+				<nav id="history" aria-label="সংরক্ষিত কথোপকথন"></nav>
+				<button id="load-more" class="quiet" hidden>আরও দেখুন</button>
+				<div class="sidebar-bottom">
+					<div class="privacy-note">
+						<span class="status-dot"></span> ব্যক্তিগত জায়গা, নিজের ভাবনা।
+					</div>
+					<button class="account" id="account">
+						<span class="avatar" id="avatar">A</span
+						><span id="account-label">অ্যাকাউন্টে প্রবেশ করুন</span
+						><span aria-hidden="true">↗</span>
+					</button>
+				</div>
+			</aside>
+			<button id="sidebar-shade" class="sidebar-shade" hidden aria-label="মেনু বন্ধ করুন"></button>
+			<main>
+				<header class="topbar">
+					<div class="topbar-left">
+						<button
+							id="menu"
+							class="icon-button mobile-menu"
+							aria-label="কথোপকথনের মেনু খুলুন"
+							aria-expanded="false"
+						>
+							☰</button
+						><span class="workspace-label"
+							>AL AHSAN <span>/</span> <span id="chat-title">নতুন কথোপকথন</span></span
+						>
+					</div>
+					<div class="top-actions">
+						<button id="rename" class="quiet" hidden>নাম বদলান</button
+						><button id="export" class="quiet" hidden>এক্সপোর্ট</button
+						><button id="delete" class="quiet danger" hidden>মুছুন</button
+						><span class="model-label"><span class="status-dot"></span> GPT-4.1 mini</span>
+					</div>
+				</header>
+				<div id="notice" class="notice" role="status" hidden></div>
+				<div id="error" class="error-banner" role="alert" hidden>
+					<span id="error-text"></span
+					><button id="dismiss-error" aria-label="বার্তা বন্ধ করুন">×</button>
+				</div>
+				<section id="welcome" class="welcome" aria-labelledby="welcome-title">
+					<div class="welcome-kicker"><span></span> ভাবনা থেকে সম্ভাবনা</div>
+					<h1 id="welcome-title">আজ কী নিয়ে<br /><em>কথা বলবেন?</em></h1>
+					<p>একটি প্রশ্ন, নতুন কোনো পরিকল্পনা, কিংবা অসমাপ্ত ভাবনা।<br />এখান থেকেই শুরু হোক।</p>
+					<div class="suggestions">
+						<button data-prompt="আমার একটি নতুন বিষয় শেখার পরিকল্পনা তৈরি করতে সাহায্য করুন।">
+							<span class="suggestion-icon" aria-hidden="true">↗</span
+							><span>নতুন কিছু শিখি<small>একটি বিষয় সহজভাবে বুঝে নিই</small></span
+							><span aria-hidden="true">→</span></button
+						><button data-prompt="একটি ভালো বাংলা ইমেইল লেখার কাঠামো উদাহরণ দিয়ে বুঝিয়ে দিন।">
+							<span class="suggestion-icon" aria-hidden="true">✎</span
+							><span>লেখা গুছিয়ে নিই<small>ভাবনাকে পরিষ্কার ভাষায় প্রকাশ করি</small></span
+							><span aria-hidden="true">→</span></button
+						><button
+							data-prompt="আজকের কাজগুলো কীভাবে অগ্রাধিকার দিয়ে সাজাতে পারি? প্রয়োজনীয় তথ্য আমাকে জিজ্ঞেস করুন।"
+						>
+							<span class="suggestion-icon" aria-hidden="true">≡</span
+							><span>পরিকল্পনা করি<small>পরের ধাপটি ঠিক করে নিই</small></span
+							><span aria-hidden="true">→</span>
+						</button>
+					</div>
+					<div class="welcome-footnote">বাংলা বা আপনার পছন্দের ভাষায় লিখুন।</div>
+				</section>
+				<section id="messages" class="messages" aria-label="চ্যাটের বার্তা" hidden></section>
+				<div id="thinking" class="thinking" role="status" hidden>
+					<span></span><span></span><span></span> উত্তর তৈরি হচ্ছে…
+				</div>
+				<div class="composer-wrap">
+					<form id="composer" class="composer">
+						<label class="sr-only" for="prompt">আপনার বার্তা</label
+						><textarea
+							id="prompt"
+							rows="2"
+							maxlength="6000"
+							placeholder="আপনার প্রশ্ন বা ভাবনাটি লিখুন…"
+							required
+						></textarea>
+						<div class="composer-bottom">
+							<span id="composer-hint">Enter চাপলে পাঠাবে · Shift + Enter নতুন লাইন</span
+							><button id="send" type="submit" aria-label="বার্তা পাঠান">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.8"
+									aria-hidden="true"
+								>
+									<path d="M12 19V5m-6 6 6-6 6 6" />
+								</svg>
+							</button>
+						</div>
+					</form>
+					<div class="composer-note">
+						AI ভুল করতে পারে। গুরুত্বপূর্ণ তথ্য যাচাই করুন।
+						<a href="https://openwebui.com" target="_blank" rel="noreferrer">Open WebUI</a>
+					</div>
+				</div>
+			</main>
+		</div>
+		<dialog id="auth-dialog" aria-labelledby="auth-title">
+			<button class="dialog-close" id="close-auth" aria-label="বন্ধ করুন">×</button>
+			<div class="dialog-kicker">OPEN WEBUI · AL AHSAN</div>
+			<h2 id="auth-title">স্বাগতম।</h2>
+			<p id="auth-description">কথোপকথন সংরক্ষণ করতে অ্যাকাউন্টে প্রবেশ করুন।</p>
+			<form id="auth-form">
+				<label id="name-field" hidden
+					>আপনার নাম<input id="auth-name" autocomplete="name" maxlength="100" /></label
+				><label id="email-field"
+					>ইমেইল<input id="auth-email" type="email" autocomplete="email" required /></label
+				><label id="password-field"
+					>পাসওয়ার্ড<input
+						id="auth-password"
+						type="password"
+						autocomplete="current-password"
+						minlength="8"
+						required
+				/></label>
+				<p id="auth-message" role="status" hidden></p>
+				<button class="primary" id="auth-submit" type="submit">প্রবেশ করুন</button>
+			</form>
+			<div class="auth-links">
+				<button id="auth-toggle" class="quiet">নতুন অ্যাকাউন্ট তৈরি করুন</button
+				><button id="auth-forgot" class="quiet">পাসওয়ার্ড ভুলে গেছেন?</button>
+			</div>
+		</dialog>
+		<dialog id="manage-dialog" aria-labelledby="manage-title">
+			<h2 id="manage-title"></h2>
+			<p id="manage-description"></p>
+			<form id="manage-form">
+				<label id="rename-field" hidden
+					>কথোপকথনের নাম<input id="rename-input" maxlength="120"
+				/></label>
+				<p id="manage-error" role="alert" hidden></p>
+				<div class="dialog-actions">
+					<button type="button" class="quiet" id="cancel-manage">বাতিল</button
+					><button type="submit" class="primary" id="manage-submit">নিশ্চিত করুন</button>
+				</div>
+			</form>
+		</dialog>
+		<script type="module" src="/main.ts"></script>
+	</body>
+</html>

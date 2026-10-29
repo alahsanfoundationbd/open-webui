@@ -18,4 +18,10 @@ declare global {
 	}
 }
 
+// The root layout provides this writable store to translated components.
+// Preserve its type when consumers retrieve the shared context by its key.
+declare module 'svelte' {
+	export function getContext(key: 'i18n'): typeof import('$lib/i18n').default;
+}
+
 export {};
