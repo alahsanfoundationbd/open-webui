@@ -7,6 +7,7 @@ export function resolveBuildInfo({
 	env = process.env,
 	cwd = fileURLToPath(new URL('../', import.meta.url))
 } = {}) {
+	/** @param {...string} args */
 	const git = (...args) => {
 		try {
 			return execFileSync('git', args, {
@@ -24,7 +25,7 @@ export function resolveBuildInfo({
 		? suppliedHash
 		: git('rev-parse', 'HEAD');
 	let channel = env.APP_BUILD_CHANNEL;
-	if (!['main', 'dev', 'unknown'].includes(channel)) {
+	if (!['main', 'dev', 'unknown'].includes(channel ?? '')) {
 		const branch = git('branch', '--show-current');
 		channel = branch === 'main' || branch === 'dev' ? branch : 'unknown';
 		if (!branch && hash) {

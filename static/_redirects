@@ -1,0 +1,2 @@
+# SvelteKit copies this file to build/ for Netlify's production SPA fallback.
+/* /index.html 200

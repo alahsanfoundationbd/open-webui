@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build:netlify"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "#custom"
+  command = "npm run dev:netlify"
+  targetPort = 5173
+  port = 8889
